@@ -1,0 +1,150 @@
+.tttt * {
+  color: white;
+}
+
+.tttt code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.tttt .site-layout .site-layout-background {
+  background: #fff;
+}
+
+#avatar {
+  border: 1px solid #1990ff;
+  border-radius: 50%;
+}
+
+.tttt .tweet-editor .ant-card-head {
+  min-height: unset;
+}
+
+.tttt .ant-card-head-title {
+  padding: 0;
+}
+
+.tttt textarea {
+  resize: none;
+  border: none !important;
+  background-color: transparent !important;
+  color: gray !important;
+  font-size: 19px !important;
+}
+
+.tttt textarea:focus,
+.tttt input:focus {
+  color: white !important;
+  outline: none !important;
+  box-shadow: none !important ;
+}
+
+.tttt .ant-card {
+  margin: 0;
+}
+
+.tttt .ant-card {
+  background-color: #15202b !important;
+  /* box-shadow: rgba(136, 153, 166, 0.2) 0px 0px 15px,
+    rgba(136, 153, 166, 0.15) 0px 0px 3px 1px; */
+}
+
+.tttt .ant-layout,
+.tttt .ant-layout-footer {
+  background-color: #3b424d;
+}
+
+.tttt div::-webkit-scrollbar-track {
+  -webkit-box-shadow: none;
+  background-color: transparent;
+}
+
+.tttt div::-webkit-scrollbar {
+  display: none;
+  /* width: 0; */
+  background-color: transparent;
+}
+
+.tttt div::-webkit-scrollbar-thumb {
+  background-color: red;
+}
+
+.tttt .twitter-button {
+  min-height: 30px;
+  background-color: #1990ff;
+  padding: 0 15px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Ubuntu, "Helvetica Neue", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  border-radius: 24px;
+  cursor: pointer;
+  outline: none;
+}
+
+.tttt .twitter-button:hover {
+  background-color: #1990fe;
+}
+
+.tttt .ant-btn.ant-btn-circle {
+  border-color: #1990ff !important;
+}
+
+.tttt .twitter-button.outline {
+  color: #1990ff;
+  background: none;
+  border: 1px solid #1990ff;
+}
+
+.tttt .twitter-button.outline:hover {
+  background: #1990ff;
+  color: white;
+  border: 1px solid #1990ff;
+}
+
+.tttt .anticon-plus > svg,
+.tttt .anticon-copy > svg,
+.tttt .anticon-close > svg {
+  fill: #1990ff !important;
+}
+
+.tttt .tw-bar {
+  height: 30px;
+  width: 1px;
+  margin: 0 8px;
+  background-color: rgb(107, 125, 140);
+}
+
+.tttt .drafts-col .ant-card-body {
+  padding: 1px 0 0 0;
+}
+
+.tttt .draft-box {
+  padding: 15px;
+  /* margin: 0 -24px; */
+  cursor: pointer;
+  border-bottom: 1px solid rgb(107, 125, 140);
+  width: 100%;
+}
+
+.tttt .draft-box:hover {
+  background-color: rgb(25, 39, 52);
+}
+
+.tttt .danger {
+  background: none;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+}
+
+.tttt .danger:hover {
+  color: white;
+  background: #ff4d4f;
+}
+
+.tttt .tweet-footer {
+  margin-top: 10px;
+  padding-top: 15px;
+  border-top: 1px solid rgb(107 125 140 / 18%);
+}

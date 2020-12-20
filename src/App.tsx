@@ -1,34 +1,28 @@
 import React, { useState } from 'react'
-import { Layout, Menu, Dropdown, Row } from 'antd';
-import {
-  SettingOutlined,
-  MessageOutlined,
-  HomeOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  BugOutlined,
-  RocketOutlined
-} from '@ant-design/icons';
-import styled from 'styled-components'
 import { useQuery, useMutation } from '@apollo/client';
 
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   Redirect,
-  useLocation,
+  useHistory,
 } from "react-router-dom";
 
+import AuthTwitter from './pages/AuthTwitter'
+import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
-import UserDropdown from './components/UserDropdown'
+import Landing from './pages/Landing';
+import Thankyou from './pages/Thankyou';
+import Dev from './pages/Dev'
+
+import Loading from './components/Loading'
+import Drawer from './components/Drawer'
 
 import { USER } from './apollo/queries'
+import { LOGOUT } from './apollo/mutations'
 
-const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
 
 
 function PrivateRoute({ children, ...rest }: any) {
@@ -38,13 +32,15 @@ function PrivateRoute({ children, ...rest }: any) {
     <Route
       {...rest}
       render={({ location }) => {
-        if (loading) return <div>loading...</div>
+        if (loading) return (
+          <Loading />
+        )
         return data?.currentUser ? (
           children
         ) : (
             <Redirect
               to={{
-                pathname: "/login",
+                pathname: "/",
                 state: { from: location }
               }}
             />
@@ -61,11 +57,11 @@ function PublicRoute({ children, ...rest }: any) {
     <Route
       {...rest}
       render={({ location }) => {
-        if (loading) return <div>loading...</div>
+        if (loading) return <Loading />
         return data?.currentUser ? (
           <Redirect
             to={{
-              pathname: "/",
+              pathname: "/app",
             }}
           />
         ) : (
@@ -78,61 +74,19 @@ function PublicRoute({ children, ...rest }: any) {
 }
 
 const App = () => {
+  const [isOpen, setIsOpen] = useState(false)
 
-  const [collapsed, setCollapsed] = useState(false)
-  const { loading, error, data } = useQuery(USER, {})
-
-  let location = useLocation();
-
-  const onCollapse = (collapsed: boolean) => {
-    setCollapsed(collapsed);
-  };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo">
-  {collapsed ? <span style={{ fontSize: 'x-large' }}>{'🚀'}</span> : 'Rocket v0.1'}
-        </div>
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={['/']} selectedKeys={[location.pathname]}>
-          <Menu.Item key="/">
-            <Link to="/">
-              <HomeOutlined />
-              <span>Home</span>
-            </Link>
-          </Menu.Item>
-        </Menu>
-      </Sider>
-      <Layout className="site-layout" style={{ height: '100vh' }}>
-        <Header className="site-layout-background" style={{ padding: 0 }}>
-          <Row justify="space-between" align="middle">
-            {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
-              className: 'trigger',
-              onClick: () => onCollapse(!collapsed),
-            } as any)}
+    <div className="flex h-screen">
+      <Drawer isOpen={isOpen} toggleDrawer={() => setIsOpen(!isOpen)} />
+      <div className="flex-1 py-4 md:py-8 sm:px-6 bg-gray-700 overflow-auto">
+        <Route exact path="/app">
+          <Home toggleDrawer={() => setIsOpen(!isOpen)} />
+        </Route>
+      </div>
+    </div>
 
-            <span style={{ paddingRight: 24 }}>
-              <UserDropdown currentUser={data?.currentUser} />
-            </span>
-
-
-          </Row>
-        </Header>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: '24px 16px',
-            padding: 24,
-            minHeight: 280,
-            overflow: 'auto'
-          }}
-        >
-          <Route exact path="/">
-            <Home />
-          </Route>
-        </Content>
-      </Layout>
-    </Layout>
 
   )
 }
@@ -142,8 +96,21 @@ const BasicExample = () => {
   return (
     <Router>
       <Switch>
-        <PublicRoute path="/login">
+        <Route path="/dev">
+          <Dev />
+        </Route>
+
+        <Route exact path="/">
+          <Landing />
+        </Route>
+        <Route exact path="/thankyou">
+          <Thankyou />
+        </Route>
+        {/* <PublicRoute path="/login">
           <Login />
+        </PublicRoute> */}
+        <PublicRoute path="/auth/twitter/redirect">
+          <AuthTwitter />
         </PublicRoute>
         <PublicRoute path="/signup">
           <Signup />
@@ -158,13 +125,6 @@ const BasicExample = () => {
 }
 
 
-function Home() {
-  return (
-    <div>
-      <h2>Welcome</h2>
-    </div>
-  );
-}
 
 
 

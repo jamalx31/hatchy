@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { ApolloProvider } from '@apollo/client';
 import { Provider } from 'react-redux';
+import { ToastProvider } from 'react-toast-notifications'
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -24,7 +25,9 @@ const render = (Component: any) => {
     <React.StrictMode>
       <ApolloProvider client={client}>
         <Provider store={store}>
-          <Component />
+          <ToastProvider>
+            <Component />
+          </ToastProvider>
         </Provider>
       </ApolloProvider>
     </React.StrictMode>,

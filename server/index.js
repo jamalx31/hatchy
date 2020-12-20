@@ -1,47 +1,58 @@
 /* eslint consistent-return:0 */
-require('dotenv').config()
+require("dotenv").config();
 
-const express = require('express');
-const cors = require('cors')
+const express = require("express");
+const cors = require("cors");
+const cookieSession = require("cookie-session");
 // const expressGraphQL = require('express-graphql');
-const bodyParser = require('body-parser');
-const secure = require('ssl-express-www');
-const { buildContext } = require('graphql-passport')
-const { ApolloServer } = require('apollo-server-express')
+const bodyParser = require("body-parser");
+const { buildContext } = require("graphql-passport");
+const { ApolloServer } = require("apollo-server-express");
 
-const logger = require('./logger');
-const mongoose = require('./api/models/mongoose');
+const logger = require("./logger");
+const mongoose = require("./api/models/mongoose");
 
-const argv = require('./argv');
-const port = require('./port');
-const setup = require('./middlewares/frontendMiddleware');
-const passport = require('./api/graphql/passport');
+const argv = require("./argv");
+const port = require("./port");
+const setup = require("./middlewares/frontendMiddleware");
+const passport = require("passport");
+const passportSetup = require("./config/passport-setup");
+// const passport = require('./api/graphql/passport');
+// const authRoutes = require("./routes/auth-routes");
 
-const typeDefs = require('./api/graphql/typeDefs')
-const resolvers = require('./api/graphql/resolvers')
-const AuhtDirective = require('./api/graphql/AuthDirective')
-const TokenDirective = require('./api/graphql/TokenDirective')
-const TokenOrAuthDirective = require('./api/graphql/TokenOrAuthDirective')
-const isDev = process.env.NODE_ENV !== 'production';
+const typeDefs = require("./api/graphql/typeDefs");
+const resolvers = require("./api/graphql/resolvers");
+const AuhtDirective = require("./api/graphql/AuthDirective");
+const TokenDirective = require("./api/graphql/TokenDirective");
+const TokenOrAuthDirective = require("./api/graphql/TokenOrAuthDirective");
+const isDev = process.env.NODE_ENV !== "production";
 
 const ngrok =
   (isDev && process.env.ENABLE_TUNNEL) || argv.tunnel
-    ? require('ngrok')
+    ? require("ngrok")
     : false;
-const { resolve } = require('path');
+const { resolve } = require("path");
 const app = express();
 
 // mongooose
 mongoose
-  .once('open', () => console.log('Connected to Mongo instance.'))
-  .on('error', error => console.log('Error connecting to Mongo:', error));
+  .once("open", () => console.log("Connected to Mongo instance."))
+  .on("error", (error) => console.log("Error connecting to Mongo:", error));
 
-// force SSL
-if (!isDev) {
-  app.use(secure);
-}
+// // force SSL
+// if (!isDev) {
+//   app.use(secure);
+// }
 
-app.use(cors()) // enable `cors` to set HTTP response header: Access-Control-Allow-Origin: *
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["DDDD"],
+    maxAge: 24 * 60 * 60 * 100
+  })
+);
+
+app.use(cors()); // enable `cors` to set HTTP response header: Access-Control-Allow-Origin: *
 
 // app.use(bodyParser.json()); // to support JSON-encoded bodies
 // app.use(
@@ -50,42 +61,42 @@ app.use(cors()) // enable `cors` to set HTTP response header: Access-Control-All
 //   }),
 // );
 
-app.use(bodyParser({ limit: '5mb' }));
-
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
-app.use(passport);
+// initalize passport
+app.use(passport.initialize());
+// deserialize cookie from the browser
+app.use(passport.session());
+
 const server = new ApolloServer({
   cors: false,
   typeDefs,
   resolvers,
   schemaDirectives: {
-    auth: AuhtDirective,
-    token: TokenDirective,
-    tokenOrAuth: TokenOrAuthDirective
+    auth: AuhtDirective
   },
   context: ({ req, res }) => buildContext({ req, res }),
   playground: {
     settings: {
-      'request.credentials': 'same-origin',
+      "request.credentials": "same-origin",
     },
   },
-})
+});
 
 server.applyMiddleware({ app });
 
 // In production we need to pass these values in instead of relying on webpack
 setup(app, {
-  outputPath: resolve(process.cwd(), 'build'),
-  publicPath: '/',
+  outputPath: resolve(process.cwd(), "build"),
+  publicPath: "/",
 });
 
 // get the intended host and port number, use localhost and port 3000 if not provided
 const customHost = argv.host || process.env.HOST;
 const host = customHost || null; // Let http.Server use its default IPv6/4 host
-const prettyHost = customHost || 'localhost';
+const prettyHost = customHost || "localhost";
 
 // Start your app.
-app.listen(port, host, async err => {
+app.listen(port, host, async (err) => {
   if (err) {
     return logger.error(err.message);
   }

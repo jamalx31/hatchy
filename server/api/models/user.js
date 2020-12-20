@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt')
+const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 const SALT_WORK_FACTOR = 10;
 
 const userSchema = mongoose.Schema(
@@ -7,58 +7,73 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
+      trim: true,
       unique: true,
+      // match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
     },
-    firstName: {
+    displayName: {
       type: String,
-      required: true,
     },
-    lastName: {
+    username: {
       type: String,
-      required: true,
     },
-    password: {
-      type: String,
-      required: true,
+    photo: {
+      type: String
     },
-    team: {
-      type: String,
-      required: true,
-    }
+    twitterProvider: {
+      type: {
+        id: String,
+        token: String,
+      },
+      select: false,
+    },
   },
-  { timestamps: {} },
+  { timestamps: {} }
 );
 
-
-
 // index ======================
-userSchema.index({ email: 'text' });
+userSchema.index({ email: "text" });
 
 // methods ======================
-userSchema.methods.comparePassword = function (candidatePassword) {
-  return bcrypt.compareSync(candidatePassword, this.password || "blabla");
+userSchema.statics.upsertTwitterUser = function (
+  token,
+  tokenSecret,
+  profile,
+  cb
+) {
+  var that = this;
+  // console.log({ profile });
+  return this.findOne(
+    {
+      "twitterProvider.id": profile.id,
+    },
+    function (err, user) {
+      // no user was found, lets create a new one
+      if (!user) {
+        var newUser = new that({
+          email: profile.emails[0].value,
+          photo: profile.photos[0].value,
+          displayName: profile.displayName,
+          username: profile.username,
+          twitterProvider: {
+            id: profile.id,
+            token: token,
+            tokenSecret: tokenSecret,
+          },
+        });
+
+        newUser.save(function (error, savedUser) {
+          if (error) {
+            console.log(error);
+          }
+          return cb(error, savedUser);
+        });
+      } else {
+        return cb(err, user);
+      }
+    }
+  );
 };
 
-userSchema.pre('save', function (next) {
-  var user = this;
-
-  // only hash the password if it has been modified (or is new)
-  if (!user.isModified('password')) return next();
-
-  // generate a salt
-  bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
-    if (err) return next(err);
-
-    // hash the password using our new salt
-    bcrypt.hash(user.password, salt, function (err, hash) {
-      if (err) return next(err);
-
-      // override the cleartext password with the hashed one
-      user.password = hash;
-      next();
-    });
-  });
-});
-
 // create the model for users and expose it to our app
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model("User", userSchema);

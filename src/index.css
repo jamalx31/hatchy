@@ -1,45 +1,30 @@
-body {
-  margin: 0;
-  /* font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; */
+@tailwind base;
+
+@tailwind components;
+
+button:focus {
+  outline: none;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.textarea {
+  overflow: hidden;
+  min-height: 100px;
+  resize: none;
 }
 
-
-#root {
-  width: 100%;
-  height: 100%;
+.dim {
+  filter: brightness(50%);
 }
 
-.trigger {
-  font-size: 18px;
-  line-height: 64px;
-  padding: 0 24px;
-  cursor: pointer;
-  transition: color 0.3s;
+.tab {
+  @apply inline-block py-2 px-4 text-gray-400 font-semibold;
 }
 
-.trigger:hover {
-  color: #1890ff;
+.selected-tab {
+  @apply border-b bg-gray-800 text-teal-400;
 }
 
-.logo {
-  height: 32px;
-  background: rgba(255, 255, 255, 0.2);
-  margin: 16px;
-  color: white;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-}
+@tailwind utilities;
 
-.site-layout .site-layout-background {
-  background: #fff;
-}
+
+

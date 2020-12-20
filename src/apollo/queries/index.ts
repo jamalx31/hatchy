@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import { gql } from "apollo-boost";
 
 export const FEEDBACKS = gql`
   query {
@@ -20,10 +20,40 @@ export const USER = gql`
     currentUser {
       _id
       email
+      username
+      displayName
+      photo
       team {
         _id
         name
         token
+      }
+    }
+  }
+`;
+
+export const TOKEN = gql`
+  query {
+    reverse
+  }
+`;
+
+export const THREADS  = gql`
+  query {
+    threads {
+      drafts {
+        _id
+        tweets {
+          text
+        }
+        timeToPost
+      }
+      scheduled {
+        _id
+        tweets {
+          text
+        }
+        timeToPost
       }
     }
   }
